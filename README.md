@@ -1,6 +1,8 @@
 # Wallet Backend
 Выполненное тестовое задание для прохождения стажировки в компании ИнфоТекС
 
+Ссылка: https://github.com/lunn06/wallet
+
 ## Запуск
 Перед запуском необходимо клонировать репозиторий с исходным ходом
 и перейти в директорию с проектом:
@@ -42,4 +44,11 @@ $ GIN_MODE=release ./wallet-backend
 Для запуска в "debug" режиме и вывода логов в консоль:
 ```bash
 $ LOG_LEVEL=debug ./wallet-backend
+```
+
+## Документация
+После запуска проекта документация к api будет по адресу: http://localhost:8080/api/swagger/index.html
+Чтобы сгенерировать документацию из исходного кода используйте [pkgsite](https://pkg.go.dev/golang.org/x/pkgsite):
+```bash
+$ pkgsite
 ```

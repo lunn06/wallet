@@ -17,9 +17,12 @@ func (wuc Usecase) Initialize(ctx context.Context) error {
 			Address: uuid.NewString(),
 			Balance: balance,
 		}
-		if _, err := wuc.interactor.Insert(ctx, wallet); err != nil {
+		wallet, err := wuc.interactor.Insert(ctx, wallet)
+		if err != nil {
 			return usecase.ErrOnInsert.Wrap(err, "failed to insert wallet")
 		}
+
+		wuc.logger.Info("Initialize wallet", "address", wallet.Address, "balance", wallet.Balance)
 	}
 
 	return nil

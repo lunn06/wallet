@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/lunn06/wallet/internal/domain/models"
 )
@@ -15,12 +16,13 @@ type walletInteractor interface {
 
 // Usecase contains interactors interfaces
 type Usecase struct {
+	logger     *slog.Logger
 	interactor walletInteractor
 }
 
-func NewUsecase(interactor walletInteractor) Usecase {
+func NewUsecase(interactor walletInteractor, logger *slog.Logger) Usecase {
 	if interactor == nil {
 		panic("interactor can not be nil")
 	}
-	return Usecase{interactor: interactor}
+	return Usecase{interactor: interactor, logger: logger}
 }

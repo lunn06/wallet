@@ -9,6 +9,7 @@
 ```bash
 $ git clone https://github.com/lunn06/wallet && cd wallet
 ```
+Адреса кошельков, сгенерированные на старте, отображаются в логах при запуске
 ### Docker Compose
 #### Зависимости
 - Docker Compose

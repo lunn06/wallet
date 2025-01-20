@@ -38,7 +38,7 @@ func NewProvider(cfg config.Config, logger *slog.Logger) (*Provider, error) {
 	walletStorage := pgx.WalletStorage{storage}
 	transactionStorage := pgx.TransactionStorage{storage}
 
-	walletUc := wallet.NewUsecase(walletStorage)
+	walletUc := wallet.NewUsecase(walletStorage, logger)
 	transactionUc := transation.NewUsecase(transactionStorage, walletStorage)
 
 	controller := gincontroller.New(

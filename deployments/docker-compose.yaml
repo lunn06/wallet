@@ -20,7 +20,7 @@ services:
     environment:
       POSTGRES_DB: "wallet-db"
       POSTGRES_USER: "wallet-user"
-      POSTGRES_PASSWORD: "b1097a3d45b57ae34507"
+      POSTGRES_PASSWORD: "noapassworf"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data

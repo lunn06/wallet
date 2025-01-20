@@ -1,6 +1,6 @@
 module github.com/lunn06/wallet
 
-go 1.23.4
+go 1.23.5
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible

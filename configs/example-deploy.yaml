@@ -1,0 +1,11 @@
+http_server:
+  address: "localhost"
+  port: "8080"
+
+database:
+  host: "localhost"
+  port: 9007
+  user: "wallet-user"
+  name: "wallet-db"
+  password: "noapassword"
+  ssl_mode: "disable"

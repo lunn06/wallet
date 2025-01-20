@@ -1,0 +1,4 @@
+/configs/deploy.yaml
+/configs/main.yaml
+
+*.log

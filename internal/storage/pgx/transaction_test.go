@@ -30,10 +30,12 @@ const (
 
 func TestTransactionStorage_GetByID(t *testing.T) {
 	t.Run("get transaction by id", func(t *testing.T) {
+		// Prepare input wallets
 		var (
 			wallet1 models.Wallet
 			wallet2 models.Wallet
 		)
+		// Insert input wallets
 		err := storage.Do(func(db *pgxpool.Pool) error {
 			balance, _ := models.NewBalanceFromFloat(math.Abs(gofakeit.Float64()))
 			wallet1 = models.Wallet{
@@ -74,6 +76,7 @@ func TestTransactionStorage_GetByID(t *testing.T) {
 			Successful:  true,
 		}
 
+		// Insert transaction and scan its id
 		storage.Do(func(db *pgxpool.Pool) error {
 			dbTransaction, err := pgxmodels.TransactionFromDomain(transaction)
 			values := dbTransaction.ValuesWithoutID()
@@ -82,6 +85,7 @@ func TestTransactionStorage_GetByID(t *testing.T) {
 		})
 		require.NoError(t, err)
 
+		// defer cleanup func
 		defer storage.Do(func(db *pgxpool.Pool) error {
 			db.Exec(context.Background(), transactionDeleteQuery, transaction.ID)
 			db.Exec(context.Background(), walletDeleteQuery, wallet1.ID)
@@ -90,9 +94,11 @@ func TestTransactionStorage_GetByID(t *testing.T) {
 			return nil
 		})
 
+		// Get transaction by id
 		result, err := transactionStorage.GetByID(context.Background(), transaction.ID)
 		assert.NoError(t, err)
 
+		// Comparison predefined and returned fields
 		assert.Equal(t, transaction.ID, result.ID)
 		assert.Equal(t, transaction.FromAddress, result.FromAddress)
 		assert.Equal(t, transaction.ToAddress, result.ToAddress)
@@ -110,10 +116,12 @@ func TestTransactionStorage_GetByID(t *testing.T) {
 
 func TestTransactionStorage_GetLastSuccessful(t *testing.T) {
 	t.Run("get last successful transactions", func(t *testing.T) {
+		// Prepare input wallets
 		var (
 			wallet1 models.Wallet
 			wallet2 models.Wallet
 		)
+		// Insert input wallets
 		err := storage.Do(func(db *pgxpool.Pool) error {
 			balance, _ := models.NewBalanceFromFloat(math.Abs(gofakeit.Float64()))
 			wallet1 = models.Wallet{
@@ -145,6 +153,7 @@ func TestTransactionStorage_GetLastSuccessful(t *testing.T) {
 		})
 		require.NoError(t, err)
 
+		// Insert 10 transactions
 		transactions := make([]models.Transaction, 10)
 		storage.Do(func(db *pgxpool.Pool) error {
 			for i := 0; i < 10; i++ {
@@ -170,6 +179,7 @@ func TestTransactionStorage_GetLastSuccessful(t *testing.T) {
 		})
 		require.NoError(t, err)
 
+		// defer cleanup func
 		defer storage.Do(func(db *pgxpool.Pool) error {
 			db.Exec(context.Background(), walletDeleteQuery, wallet1.ID)
 			db.Exec(context.Background(), walletDeleteQuery, wallet2.ID)
@@ -180,10 +190,12 @@ func TestTransactionStorage_GetLastSuccessful(t *testing.T) {
 			return nil
 		})
 
+		// getting last successful transactions
 		result, err := transactionStorage.GetLastSuccessful(context.Background(), 10)
 		assert.NoError(t, err)
 		assert.Equal(t, len(transactions), len(result))
 
+		// Comparison predefined and returned transactions(in reverse order)
 		for i := range transactions {
 			assert.Equal(t, transactions[len(transactions)-1-i].ID, result[i].ID)
 			assert.Equal(t, transactions[len(transactions)-1-i].FromAddress, result[i].FromAddress)
@@ -201,10 +213,12 @@ func TestTransactionStorage_GetLastSuccessful(t *testing.T) {
 
 func TestTransactionStorage_Insert(t *testing.T) {
 	t.Run("insert valid wallet", func(t *testing.T) {
+		// Prepare input wallets
 		var (
 			wallet1 models.Wallet
 			wallet2 models.Wallet
 		)
+		// Insert input wallets
 		err := storage.Do(func(db *pgxpool.Pool) error {
 			balance, _ := models.NewBalanceFromFloat(math.Abs(gofakeit.Float64()))
 			wallet1 = models.Wallet{
@@ -245,8 +259,10 @@ func TestTransactionStorage_Insert(t *testing.T) {
 			Successful:  true,
 		}
 
+		// Insert transaction
 		result1, err := transactionStorage.Insert(context.Background(), transaction)
 
+		// defer cleanup func
 		defer storage.Do(func(db *pgxpool.Pool) error {
 			db.Exec(context.Background(), walletDeleteQuery, wallet1.ID)
 			db.Exec(context.Background(), walletDeleteQuery, wallet2.ID)
@@ -255,6 +271,7 @@ func TestTransactionStorage_Insert(t *testing.T) {
 			return nil
 		})
 
+		// Scan inserted fields
 		var dbTransaction pgxmodels.Transaction
 		err = storage.Do(func(db *pgxpool.Pool) error {
 			dbTransaction, _ = pgxmodels.TransactionFromDomain(result1)
@@ -275,6 +292,7 @@ func TestTransactionStorage_Insert(t *testing.T) {
 		result2, err := dbTransaction.ToDomain()
 		assert.NoError(t, err)
 
+		// Comparison inserted and scanned transactions fields
 		assert.Equal(t, result1.ID, result2.ID)
 		assert.Equal(t, transaction.FromAddress, result2.FromAddress)
 		assert.Equal(t, transaction.ToAddress, result2.ToAddress)

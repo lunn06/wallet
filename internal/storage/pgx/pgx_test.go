@@ -17,6 +17,7 @@ var (
 	transactionStorage pgx.TransactionStorage
 )
 
+// TestMain define a startup and shutdown resources for tests
 func TestMain(m *testing.M) {
 	cfg, err := config.ReadConfig("../../../configs/main.yaml")
 	if err != nil {
@@ -40,7 +41,7 @@ func TestMain(m *testing.M) {
 	walletStorage = pgx.WalletStorage{storage}
 	transactionStorage = pgx.TransactionStorage{storage}
 
-	m.Run()
+	m.Run() // run all tests
 
 	if err := storage.Close(context.Background()); err != nil {
 		panic(err)

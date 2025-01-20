@@ -30,12 +30,14 @@ func TestWalletStorage_GetByID(t *testing.T) {
 			Balance: balance,
 		}
 
+		// defer cleanup func
 		defer storage.Do(func(db *pgxpool.Pool) error {
 			db.Exec(context.Background(), walletDeleteQuery, wallet.Address)
 
 			return nil
 		})
 
+		// Insert predefined wallet
 		err := storage.Do(func(db *pgxpool.Pool) error {
 			newDBWallet, _ := pgxmodels.WalletFromDomain(wallet)
 
@@ -70,6 +72,7 @@ func TestWalletStorage_GetByAddress(t *testing.T) {
 			Balance: balance,
 		}
 
+		// defer cleanup func
 		defer storage.Do(func(db *pgxpool.Pool) error {
 			db.Exec(context.Background(), walletDeleteQuery, wallet.Address)
 
@@ -94,7 +97,7 @@ func TestWalletStorage_GetByAddress(t *testing.T) {
 
 		assert.True(t, result.Balance.Equal(result.Balance))
 	})
-	t.Run("junior not found", func(t *testing.T) {
+	t.Run("wallet not found", func(t *testing.T) {
 		_, err := walletStorage.GetByAddress(context.Background(), uuid.NewString())
 		assert.ErrorContains(t, err, storageLayer.ErrNotFound.String())
 	})
@@ -108,6 +111,7 @@ func TestWalletStorage_Insert(t *testing.T) {
 			Balance: balance,
 		}
 
+		// defer cleanup func
 		defer storage.Do(func(db *pgxpool.Pool) error {
 			db.Exec(context.Background(), walletDeleteQuery, wallet.Address)
 			return nil
@@ -119,6 +123,7 @@ func TestWalletStorage_Insert(t *testing.T) {
 		assert.Equal(t, wallet.Address, result1.Address)
 		assert.True(t, wallet.Balance.Equal(result1.Balance))
 
+		// Scan inserted fields
 		var dbWallet pgxmodels.Wallet
 		err = storage.Do(func(db *pgxpool.Pool) error {
 			dbWallet, _ = pgxmodels.WalletFromDomain(wallet)
@@ -131,6 +136,8 @@ func TestWalletStorage_Insert(t *testing.T) {
 
 		result2, err := dbWallet.ToDomain()
 		assert.NoError(t, err)
+
+		// Comparison inserted and scanned fields
 		assert.Equal(t, result1.ID, result2.ID)
 		assert.Equal(t, wallet.Address, result2.Address)
 		assert.True(t, wallet.Balance.Equal(result2.Balance))
@@ -145,6 +152,7 @@ func TestWalletStorage_UpdateBalance(t *testing.T) {
 			Balance: balance,
 		}
 
+		// defer cleanup func
 		defer storage.Do(func(db *pgxpool.Pool) error {
 			db.Exec(context.TODO(), walletDeleteQuery, wallet.Address)
 			return nil
@@ -165,6 +173,7 @@ func TestWalletStorage_UpdateBalance(t *testing.T) {
 
 		assert.NoError(t, err)
 
+		// Scan updated fields
 		var dbWallet pgxmodels.Wallet
 		err = storage.Do(func(db *pgxpool.Pool) error {
 			dbWallet, _ = pgxmodels.WalletFromDomain(wallet)
@@ -177,6 +186,8 @@ func TestWalletStorage_UpdateBalance(t *testing.T) {
 
 		result, err := dbWallet.ToDomain()
 		assert.NoError(t, err)
+
+		// Comparison updated and scanned fields
 		assert.Equal(t, wallet.ID, result.ID)
 		assert.Equal(t, wallet.Address, result.Address)
 		assert.True(t, wallet.Balance.Equal(result.Balance))

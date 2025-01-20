@@ -26,8 +26,8 @@ $ docker compose -f deployments/docker-compose.yaml up -d
 - Go 1.23.5
 - Postgres 17
 
-Установку и запуск Postgresql 17 выполнить в соответствии с [официальной докумендацией](https://www.postgresql.org/download/).
-Данные для запуска продублировать в main.yaml
+Установку и запуск Postgresql 17 выполнить в соответствии с [официальной документацией](https://www.postgresql.org/download/).
+Данные для запуска продублировать в main.yaml(его скопировать как deploy.yaml в пункте выше)
 
 Скачиваем зависимости и собираем проект:
 ```bash
